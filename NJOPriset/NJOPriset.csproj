@@ -11,7 +11,7 @@
     <AssemblyName>NJOPriset</AssemblyName>
     <TargetFramework>net48</TargetFramework>
     <LangVersion>9</LangVersion>
-    <Version>0.0.1</Version>
+    <Version>0.1.0</Version>
     <FileAlignment>512</FileAlignment>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>portable</DebugType>

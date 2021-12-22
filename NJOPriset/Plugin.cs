@@ -30,7 +30,7 @@ namespace NJOPriset
             Instance = this;
             Log = logger;
             Log.Info("NJOPriset initialized.");
-            zenjector.OnMenu<NJOPMenuInstaller>();
+            zenjector.Install<NJOPMenuInstaller>(Location.Menu);
         }
 
         #region BSIPA Config

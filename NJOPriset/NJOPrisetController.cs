@@ -7,8 +7,10 @@ using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -24,6 +26,9 @@ namespace NJOPriset
     public class NJOPrisetController : MonoBehaviour
     {
         public ConcurrentDictionary<SongDataEntity, int> NJODatas { get; } = new ConcurrentDictionary<SongDataEntity, int>();
+        public ReadOnlyDictionary<float, int> dorpDownId;
+
+
         [Inject]
         public void Constractor(GameplaySetupViewController container, PlayerDataModel model, StandardLevelDetailViewController standard)
         {
@@ -87,6 +92,13 @@ namespace NJOPriset
         private void Start()
         {
             this.noteJumpStartBeatOffsetDropdown = this.playerSettingsPanelController.GetField<NoteJumpStartBeatOffsetDropdown, PlayerSettingsPanelController>("_noteJumpStartBeatOffsetDropdown");
+            var dic = new Dictionary<float, int>();
+            var getnameList = this.noteJumpStartBeatOffsetDropdown.GetType().GetMethod("GetNamedValues", BindingFlags.NonPublic | BindingFlags.Instance);
+            var values = (IReadOnlyList<Tuple<float, string>>)getnameList.Invoke(this.noteJumpStartBeatOffsetDropdown, null);
+            foreach (var item in values.Select((x, i) => (x.Item1, i))) {
+                dic.Add(item.Item1, item.Item2);
+            }
+            this.dorpDownId = new ReadOnlyDictionary<float, int>(dic);
             this._simpleTextDropdown = this.noteJumpStartBeatOffsetDropdown.GetField<SimpleTextDropdown, NoteJumpStartBeatOffsetDropdown>("_simpleTextDropdown");
         }
 
@@ -106,7 +118,7 @@ namespace NJOPriset
                 var parentCharaName = beatmap.parentDifficultyBeatmapSet.beatmapCharacteristic.serializedName;
                 var diff = (int)beatmap.difficulty;
                 var levelID = beatmap.level.levelID;
-                var njo = this.noteJumpStartBeatOffsetDropdown.GetIdxForOffset(this.playerDataModel.playerData.playerSpecificSettings.noteJumpStartBeatOffset);
+                this.dorpDownId.TryGetValue(this.playerDataModel.playerData.playerSpecificSettings.noteJumpStartBeatOffset, out var njo);
                 this.NJODatas.AddOrUpdate(new SongDataEntity(levelID, parentCharaName, diff), njo, (e, v) => njo);
                 var setting = SettingJson.Load();
                 foreach (var item in this.NJODatas) {
