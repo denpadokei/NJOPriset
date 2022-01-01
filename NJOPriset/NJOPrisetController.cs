@@ -99,7 +99,7 @@ namespace NJOPriset
                 dic.Add(item.Item1, item.Item2);
             }
             this.dorpDownId = new ReadOnlyDictionary<float, int>(dic);
-            this._simpleTextDropdown = this.noteJumpStartBeatOffsetDropdown.GetField<SimpleTextDropdown, NoteJumpStartBeatOffsetDropdown>("_simpleTextDropdown");
+            this._simpleTextDropdown = this.noteJumpStartBeatOffsetDropdown.GetField<SimpleTextDropdown, ValueDropdownController<float>>("_simpleTextDropdown");
         }
 
         private void OnDestroy()
